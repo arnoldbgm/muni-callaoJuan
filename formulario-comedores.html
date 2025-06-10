@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Comedores - Municipalidad del Callao</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <style>
+    /* Animaciones personalizadas */
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .slide-in-up {
+      animation: slideInUp 0.6s ease-out;
+    }
+    
+    .pulse-hover:hover {
+      animation: pulse 0.3s ease-in-out;
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+    }
+    
+    /* Efectos de gradiente */
+    .gradient-border {
+      background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
+      padding: 2px;
+      border-radius: 12px;
+    }
+    
+    .gradient-border > div {
+      background: white;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 min-h-screen">
+
+  <!-- Header / Nav -->
+  <header class="glass-effect shadow-lg sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo y título -->
+        <div class="flex items-center space-x-3">
+          <i class="fas fa-city text-2xl text-purple-600"></i>
+          <h1 class="text-lg sm:text-xl font-bold text-gray-800 hidden sm:block">
+            Municipalidad Provincial del Callao
+          </h1>
+          <h1 class="text-sm font-bold text-gray-800 sm:hidden">MPC</h1>
+        </div>
+        
+        <!-- Navegación -->
+        <div class="flex space-x-2 sm:space-x-6">
+          <a href="registro-beneficiarios.html" onclick="navegarA('registro')" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
+            <i class="fas fa-user-plus mr-1"></i>
+            <span class="hidden sm:inline">Registro</span>
+          </a>
+          <a href="formulario-comedores.html" class="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
+            <i class="fas fa-utensils mr-1"></i>
+            <span class="hidden sm:inline">Comedores</span>
+          </a>
+          <a href="entrega-raciones.html" onclick="navegarA('raciones')" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
+            <i class="fas fa-box mr-1"></i>
+            <span class="hidden sm:inline">Raciones</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Título y estadísticas -->
+    <section class="mb-8 slide-in-up">
+      <div class="text-center mb-6">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+          <i class="fas fa-utensils text-purple-600 mr-3"></i>
+          Gestión de Comedores Populares
+        </h2>
+        <p class="text-gray-600 text-lg">Administra los comedores y su capacidad operativa</p>
+      </div>
+      
+      <!-- Estadísticas en tiempo real -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="gradient-border pulse-hover">
+          <div class="p-6 text-center">
+            <i class="fas fa-store text-3xl text-purple-600 mb-2"></i>
+            <h3 class="text-2xl font-bold text-gray-900" id="totalComedores">0</h3>
+            <p class="text-gray-600">Total Comedores</p>
+          </div>
+        </div>
+        
+        <div class="gradient-border pulse-hover">
+          <div class="p-6 text-center">
+            <i class="fas fa-check-circle text-3xl text-green-600 mb-2"></i>
+            <h3 class="text-2xl font-bold text-gray-900" id="comedoresActivos">0</h3>
+            <p class="text-gray-600">Activos</p>
+          </div>
+        </div>
+        
+        <div class="gradient-border pulse-hover">
+          <div class="p-6 text-center">
+            <i class="fas fa-users text-3xl text-blue-600 mb-2"></i>
+            <h3 class="text-2xl font-bold text-gray-900" id="capacidadTotal">0</h3>
+            <p class="text-gray-600">Capacidad Total</p>
+          </div>
+        </div>
+        
+        <div class="gradient-border pulse-hover">
+          <div class="p-6 text-center">
+            <i class="fas fa-user-tie text-3xl text-orange-600 mb-2"></i>
+            <h3 class="text-2xl font-bold text-gray-900" id="encargados">0</h3>
+            <p class="text-gray-600">Encargados</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulario de registro -->
+    <section class="mb-8 slide-in-up">
+      <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+        <div class="flex items-center mb-6">
+          <i class="fas fa-plus-circle text-2xl text-purple-600 mr-3"></i>
+          <h3 class="text-2xl font-bold text-gray-900">Registrar Nuevo Comedor</h3>
+        </div>
+        
+        <!-- Notificación -->
+        <div id="notificacion" class="hidden mb-6 p-4 rounded-lg"></div>
+        
+        <form id="formComedor" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Nombre del comedor -->
+            <div>
+              <label for="nombreComedor" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-store mr-1"></i>Nombre del Comedor *
+              </label>
+              <input type="text" 
+                     name="nombreComedor" 
+                     id="nombreComedor" 
+                     placeholder="Ej: Comedor Santa Rosa"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+            </div>
+
+            <!-- Dirección -->
+            <div>
+              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-map-marker-alt mr-1"></i>Dirección *
+              </label>
+              <input type="text" 
+                     name="direccion" 
+                     id="direccion" 
+                     placeholder="Av. Principal 123, Callao"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+            </div>
+
+            <!-- Capacidad diaria -->
+            <div>
+              <label for="capacidad" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-users mr-1"></i>Capacidad Diaria *
+              </label>
+              <input type="number" 
+                     name="capacidad" 
+                     id="capacidad" 
+                     placeholder="150"
+                     min="1"
+                     max="1000"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+              <small class="text-gray-500">Número máximo de raciones diarias</small>
+            </div>
+
+            <!-- Encargado -->
+            <div>
+              <label for="encargado" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-user-tie mr-1"></i>Encargado Principal *
+              </label>
+              <input type="text" 
+                     name="encargado" 
+                     id="encargado" 
+                     placeholder="Nombre del encargado"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-phone mr-1"></i>Teléfono de Contacto *
+              </label>
+              <input type="tel" 
+                     name="telefono" 
+                     id="telefono" 
+                     placeholder="999-999-999"
+                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-envelope mr-1"></i>Email de Contacto
+              </label>
+              <input type="email" 
+                     name="email" 
+                     id="email" 
+                     placeholder="comedor@ejemplo.com"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" />
+            </div>
+          </div>
+
+          <!-- Horarios de atención -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="horarioApertura" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-clock mr-1"></i>Hora de Apertura *
+              </label>
+              <input type="time" 
+                     name="horarioApertura" 
+                     id="horarioApertura"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+            </div>
+
+            <div>
+              <label for="horarioCierre" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-clock mr-1"></i>Hora de Cierre *
+              </label>
+              <input type="time" 
+                     name="horarioCierre" 
+                     id="horarioCierre"
+                     class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     required />
+            </div>
+          </div>
+
+          <!-- Botón de registro -->
+           <div class="pt-6">
+            <button type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-300">
+              <i class="fas fa-save mr-2"></i>Registrar Comedor
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tabla de comedores registrados -->
+    <section class="slide-in-up">
+      <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+        <div class="flex items-center mb-6">
+          <i class="fas fa-utensils text-2xl text-green-600 mr-3"></i>
+          <h3 class="text-2xl font-bold text-gray-900">Listado de Comedores Registrados</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+            <thead class="bg-gray-100 text-gray-600 uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-3">Nombre</th>
+                <th class="px-6 py-3">Dirección</th>
+                <th class="px-6 py-3">Capacidad</th>
+                <th class="px-6 py-3">Encargado</th>
+                <th class="px-6 py-3">Teléfono</th>
+                <th class="px-6 py-3">Email</th>
+                <th class="px-6 py-3">Horario</th>
+              </tr>
+            </thead>
+            <tbody id="tablaComedores" class="divide-y divide-gray-300">
+              <!-- JS agregará aquí las filas -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-16 bg-gradient-to-r from-gray-800 to-gray-900 text-gray-300 py-12 animate-fade-in-up" role="contentinfo">
+    <div class="max-w-4xl mx-auto px-8">
+      <div class="text-center space-y-6">
+        <div class="flex justify-center items-center space-x-2">
+          <i class="fas fa-graduation-cap text-yellow-400 animate-pulse-custom" aria-hidden="true"></i>
+          <h4 class="text-lg font-semibold tracking-wide text-gray-200">
+            Proyecto Final del Curso Code 201
+          </h4>
+        </div>
+        <div class="border-t border-gray-700 pt-6">
+          <p class="text-sm mb-2">
+            © 2025 Municipalidad Provincial del Callao. Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
