@@ -296,37 +296,6 @@
         <fieldset class="contents">
           <legend class="sr-only">Información de la entrega de ración</legend>
           
-          <div class="flex flex-col space-y-2">
-            <label for="fecha" class="font-medium text-gray-700 flex items-center">
-              <i class="fas fa-calendar mr-2" aria-hidden="true"></i>
-              Fecha de Entrega
-            </label>
-            <input 
-              type="date" 
-              name="fecha" 
-              id="fecha" 
-              class="border border-gray-300 input-padding rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300" 
-              required 
-              aria-describedby="fecha-error"
-            >
-            <span id="fecha-error" class="text-red-500 text-xs hidden" role="alert"></span>
-          </div>
-
-          <div class="flex flex-col space-y-2">
-            <label for="hora" class="font-medium text-gray-700 flex items-center">
-              <i class="fas fa-clock mr-2" aria-hidden="true"></i>
-              Hora de Entrega
-            </label>
-            <input 
-              type="time" 
-              name="hora" 
-              id="hora" 
-              class="border border-gray-300 input-padding rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300" 
-              required
-              aria-describedby="hora-error"
-            >
-            <span id="hora-error" class="text-red-500 text-xs hidden" role="alert"></span>
-          </div>
 
           <div class="flex flex-col space-y-2">
             <label for="dni" class="font-medium text-gray-700 flex items-center">
@@ -397,11 +366,6 @@
               aria-describedby="comedor-error"
             >
               <option value="">Seleccione un comedor</option>
-              <option value="Central">Comedor Central</option>
-              <option value="Bellavista">Comedor Bellavista</option>
-              <option value="Carmen de la Legua">Comedor Carmen de la Legua</option>
-              <option value="La Perla">Comedor La Perla</option>
-              <option value="Ventanilla">Comedor Ventanilla</option>
             </select>
             <span id="comedor-error" class="text-red-500 text-xs hidden" role="alert"></span>
           </div>
