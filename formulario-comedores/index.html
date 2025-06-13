@@ -61,15 +61,15 @@
         
         <!-- Navegación -->
         <div class="flex space-x-2 sm:space-x-6">
-          <a href="registro-beneficiarios.html" onclick="navegarA('registro')" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
+          <a href="../registro-beneficiarios/index.html" onclick="navegarA('registro')" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
             <i class="fas fa-user-plus mr-1"></i>
             <span class="hidden sm:inline">Registro</span>
           </a>
-          <a href="formulario-comedores.html" class="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
+          <a href="../formulario-comedores/index.html" class="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
             <i class="fas fa-utensils mr-1"></i>
             <span class="hidden sm:inline">Comedores</span>
           </a>
-          <a href="entrega-raciones.html" onclick="navegarA('raciones')" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
+          <a href="../entrega-raciones/index.html" onclick="navegarA('raciones')" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-lg text-sm font-medium pulse-hover">
             <i class="fas fa-box mr-1"></i>
             <span class="hidden sm:inline">Raciones</span>
           </a>
@@ -150,6 +150,7 @@
                      id="nombreComedor" 
                      placeholder="Ej: Comedor Santa Rosa"
                      class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     autocomplete="organization"
                      required />
             </div>
 
@@ -163,6 +164,7 @@
                      id="direccion" 
                      placeholder="Av. Principal 123, Callao"
                      class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     autocomplete="street-address"
                      required />
             </div>
 
@@ -175,9 +177,10 @@
                      name="capacidad" 
                      id="capacidad" 
                      placeholder="150"
-                     min="1"
+                     min="10"
                      max="1000"
                      class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     autocomplete="off"
                      required />
               <small class="text-gray-500">Número máximo de raciones diarias</small>
             </div>
@@ -192,6 +195,7 @@
                      id="encargado" 
                      placeholder="Nombre del encargado"
                      class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     autocomplete="name"
                      required />
             </div>
 
@@ -206,6 +210,7 @@
                      placeholder="999-999-999"
                      pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}"
                      class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                     autocomplete="tel"
                      required />
             </div>
 
@@ -218,6 +223,7 @@
                      name="email" 
                      id="email" 
                      placeholder="comedor@ejemplo.com"
+                     autocomplete="email"
                      class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" />
             </div>
           </div>
@@ -234,24 +240,42 @@
     </section>
 
     <!-- Tabla de comedores registrados -->
-    <section class="slide-in-up">
-      <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+    <section class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div class="flex items-center mb-6">
           <i class="fas fa-utensils text-2xl text-green-600 mr-3"></i>
           <h3 class="text-2xl font-bold text-gray-900">Listado de Comedores Registrados</h3>
         </div>
 
+        <!-- Buscador -->
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" 
+                   id="buscador"
+                   placeholder="Buscar nombre de comedor..."
+                   class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 w-64">
+          </div>
+          <button onclick="exportarDatos()" 
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+            <i class="fas fa-download mr-1"></i>Exportar
+          </button>
+        </div>
+      </div>
+      <div class="overflow-x-auto"></div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
             <thead class="bg-gray-100 text-gray-600 uppercase tracking-wider">
               <tr>
+                <th class="px-6 py-3">Fecha de Registro</th>
                 <th class="px-6 py-3">Nombre</th>
                 <th class="px-6 py-3">Dirección</th>
                 <th class="px-6 py-3">Capacidad</th>
                 <th class="px-6 py-3">Encargado</th>
                 <th class="px-6 py-3">Teléfono</th>
                 <th class="px-6 py-3">Email</th>
-                <th class="px-6 py-3">Horario</th>
+                <th class="px-6 py-3">Estado</th>
+                <th class="px-6 py-3">Acciones</th>
               </tr>
             </thead>
             <tbody id="tablaComedores" class="divide-y divide-gray-300">
@@ -281,5 +305,10 @@
       </div>
     </div>
   </footer>
+  <script src="app.js"></script>
+  <!-- Agregar librería SheetJS para exportar .xlsx -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <!-- Agregar librería SweetAlert2 para alertas de confirmación -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
