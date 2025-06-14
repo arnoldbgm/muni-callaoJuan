@@ -4,21 +4,13 @@ let beneficiarios = [];
 let editandoIndex = -1;
 
 // Lista de comedores disponibles
-const comedores = [
-    'Comedor San Juan Bosco',
-    'Comedor Nuestra Señora de Fátima',
-    'Comedor Los Ángeles',
-    'Comedor Santa Rosa de Lima',
-    'Comedor San Martín de Porres',
-    'Comedor Virgen del Carmen',
-    'Comedor Cristo Redentor',
-    'Comedor San José Obrero'
-];
+let comedores = [];
 
 // Inicializar aplicación
 document.addEventListener('DOMContentLoaded', function() {
-    cargarComedores();
+    cargarComedoresDesdeStorage();
     cargarBeneficiariosGuardados();
+    cargarComedores();
     actualizarEstadisticas();
     configurarBuscador();
     
@@ -26,15 +18,55 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('formRegistro').addEventListener('submit', registrarBeneficiario);
 });
 
-// Cargar comedores en el select
+//Cargar comedores desde LocalStorage:
+function cargarComedoresDesdeStorage() {
+    try {
+        const comedoresGuardados = localStorage.getItem('comedores');
+        if (comedoresGuardados) {
+            const listaComedores = JSON.parse(comedoresGuardados);
+            // Solo incluir comedores activos
+            comedores = listaComedores
+                .filter(comedor => comedor.activo)
+                .map(comedor => comedor.nombre);
+        } else {
+            comedores = [];
+        }
+        console.log('Comedores cargados:', comedores);
+    } catch (error) {
+        console.error('Error al cargar comedores:', error);
+        comedores = [];
+    }
+}
+
+//Cargar comedores en el select
 function cargarComedores() {
     const selectComedor = document.getElementById('comedor');
-    comedores.forEach(comedor => {
+    
+    // Limpiar opciones existentes (excepto la primera)
+    while (selectComedor.children.length > 1) {
+        selectComedor.removeChild(selectComedor.lastChild);
+    }
+    
+    if (comedores.length === 0) {
+        // Si no hay comedores, mostrar mensaje
         const option = document.createElement('option');
-        option.value = comedor;
-        option.textContent = comedor;
+        option.value = '';
+        option.textContent = 'No hay comedores disponibles';
+        option.disabled = true;
         selectComedor.appendChild(option);
-    });
+    } else{
+        // Agregar comedores al select
+        comedores.forEach(comedor => {
+            const option = document.createElement('option');
+            option.value = comedor;
+            option.textContent = comedor;
+            selectComedor.appendChild(option);
+        });
+    }
+    
+    
+    
+    console.log(`Se cargaron ${comedores.length} comedores en el select`);
 }
 
 // Registrar nuevo beneficiario
@@ -298,49 +330,60 @@ function convertirACSV(array) {
 // Guardar beneficiarios en localStorage
 function guardarBeneficiarios() {
     try {
-        // localStorage.setItem('beneficiarios', JSON.stringify(beneficiarios));
+        localStorage.setItem('beneficiarios', JSON.stringify(beneficiarios));
         console.log('Datos guardados (simulado):', beneficiarios);
     } catch (error) {
         console.error('Error al guardar datos:', error);
+        mostrarNotificacion('Error al guardar los datos', 'error');
     }
 }
 
 // Cargar beneficiarios desde localStorage
 function cargarBeneficiariosGuardados() {
     try {
-        // const datosGuardados = localStorage.getItem('beneficiarios');
-        // if (datosGuardados) {
-        //     beneficiarios = JSON.parse(datosGuardados);
-        //     actualizarTabla();
-        //     actualizarEstadisticas();
-        // }
-        console.log('Cargando datos guardados (simulado)');
+        const datosGuardados = localStorage.getItem('beneficiarios');
+        if (datosGuardados) {
+            beneficiarios = JSON.parse(datosGuardados);
+            actualizarTabla();
+            actualizarEstadisticas();
+            console.log('Beneficiarios cargados desde localStorage:', beneficiarios);
+        }
     } catch (error) {
         console.error('Error al cargar datos:', error);
+        mostrarNotificacion('Error al cargar los datos guardados', 'error');
     }
+}
+
+function actualizarComedoresDisponibles() {
+    cargarComedoresDesdeStorage();
+    cargarComedores();
+    mostrarNotificacion('Lista de comedores actualizada', 'success');
 }
 
 // Validación en tiempo real del DNI
 document.addEventListener('DOMContentLoaded', function() {
     const dniInput = document.getElementById('dni');
-    dniInput.addEventListener('input', function() {
-        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8);
-    });
+    if (dniInput) {
+        dniInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8);
+        });
+    }
     
     const telefonoInput = document.getElementById('telefono');
-    telefonoInput.addEventListener('input', function() {
-        let valor = this.value.replace(/[^0-9]/g, '');
-        if (valor.length >= 3 && valor.length <= 6) {
-            valor = valor.substring(0, 3) + '-' + valor.substring(3);
-        } else if (valor.length > 6) {
-            valor = valor.substring(0, 3) + '-' + valor.substring(3, 6) + '-' + valor.substring(6, 9);
-        }
-        this.value = valor;
-    });
+    if (telefonoInput) {
+        telefonoInput.addEventListener('input', function() {
+            let valor = this.value.replace(/[^0-9]/g, '');
+            if (valor.length >= 3 && valor.length <= 6) {
+                valor = valor.substring(0, 3) + '-' + valor.substring(3);
+            } else if (valor.length > 6) {
+                valor = valor.substring(0, 3) + '-' + valor.substring(3, 6) + '-' + valor.substring(6, 9);
+            }
+            this.value = valor;
+        });
+    }
 });
 
 // Función para navegación (referenciada en el HTML)
 function navegarA(seccion) {
     console.log(`Navegando a: ${seccion}`);
-    // Aquí podrías implementar la navegación entre secciones
 }
