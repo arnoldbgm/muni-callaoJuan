@@ -1,170 +1,99 @@
-// registros.js
-
-let envioEnProceso = false;
-
-function getBeneficiariosFromStorage() {
-    try {
-        const beneficiarios = localStorage.getItem('beneficiarios');
-        return beneficiarios ? JSON.parse(beneficiarios) : [];
-    } catch (error) {
-        console.error('Error al leer beneficiarios del localStorage:', error);
-        return [];
-    }
-}
-
-function establecerComedor(comedor) {
-    const comedorSelect = document.getElementById('comedor');
-    let opcionExiste = Array.from(comedorSelect.options).some(opt => opt.value === comedor);
-    if (!opcionExiste && comedor) {
-        const option = document.createElement('option');
-        option.value = comedor;
-        option.textContent = comedor;
-        comedorSelect.appendChild(option);
-    }
-    comedorSelect.value = comedor || '';
-}
-
-function limpiarCampos() {
-    document.getElementById('nombre').value = '';
-    document.getElementById('comedor').value = '';
-    document.querySelectorAll('[id$="-error"]').forEach(el => {
-        el.textContent = '';
-        el.classList.add('hidden');
-    });
-    document.querySelectorAll('input, select').forEach(input => {
-        input.classList.remove('border-green-500', 'border-red-500');
-    });
-}
-
-function mostrarEstado(elemento, mensaje, esExito = false) {
-    const errorElement = document.getElementById(elemento + '-error');
-    if (errorElement) {
-        errorElement.textContent = mensaje;
-        errorElement.classList.remove('hidden');
-        errorElement.className = esExito ? 'text-green-600 text-xs' : 'text-red-500 text-xs';
-    }
-}
-
-function estilizarCampo(elementId, esValido) {
-    const elemento = document.getElementById(elementId);
-    if (elemento) {
-        elemento.classList.remove('border-green-500', 'border-red-500');
-        elemento.classList.add(esValido ? 'border-green-500' : 'border-red-500');
-    }
-}
-
-function guardarRegistroEntrega(datosEntrega) {
-    try {
-        const { dni, nombre, tipoRacion, comedor } = datosEntrega;
-        if (!dni || !nombre || !tipoRacion || !comedor) {
-            console.warn('❌ Registro ignorado por campos vacíos:', datosEntrega);
-            return false;
-        }
-
-        const entregas = JSON.parse(localStorage.getItem('entregas')) || [];
-        const nuevaEntrega = {
-            id: Date.now(),
-            dni,
-            nombre,
-            tipoDeRacion: tipoRacion,
-            comedor,
-            fecha: new Date().toLocaleDateString('es-PE'),
-            hora: new Date().toLocaleTimeString('es-PE')
-        };
-
-        entregas.push(nuevaEntrega);
-        console.log(nuevaEntrega)
-        localStorage.setItem('entregas', JSON.stringify(entregas));
-        console.log('✅ Entrega registrada:', nuevaEntrega);
-        return true;
-    } catch (error) {
-        console.error('Error al guardar en localStorage:', error);
-        return false;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('formRaciones');
-    const dniInput = document.getElementById('dni');
-
-    dniInput.addEventListener('keyup', () => {
-        const dni = dniInput.value.trim();
-        if (dni.length < 8) {
-            limpiarCampos();
-            return;
-        }
-
-        const beneficiarios = getBeneficiariosFromStorage();
-        const beneficiario = beneficiarios.find(b => b.dni === dni);
-
-        if (beneficiario) {
-            const nombreCompleto = `${beneficiario.nombre} ${beneficiario.apellidos}`.toUpperCase();
-            document.getElementById('nombre').value = nombreCompleto;
-            establecerComedor(beneficiario.comedor);
-            mostrarEstado('dni', '✓ Beneficiario encontrado', true);
-            estilizarCampo('dni', true);
-            estilizarCampo('nombre', true);
-            estilizarCampo('comedor', true);
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Verificar beneficiario por DNI usando keyup
+    document.getElementById('dni').addEventListener('keyup', function() {
+        const dni = this.value.trim();
+        
+        // Solo buscar si tiene 8 dígitos o más
+        if (dni.length >= 8) {
+            try {
+                const beneficiarios = JSON.parse(localStorage.getItem('beneficiarios')) || [];
+                const beneficiario = beneficiarios.find(b => b.dni === dni);
+                
+                if (beneficiario) {
+                    // Llenar campos automáticamente
+                    const nombreCompleto = `${beneficiario.nombre} ${beneficiario.apellidos}`.toUpperCase();
+                    document.getElementById('nombre').value = nombreCompleto;
+                    
+                    // Establecer comedor
+                    const comedorSelect = document.getElementById('comedor');
+                    comedorSelect.innerHTML = `<option value="">Seleccione un comedor</option>
+                                              <option value="${beneficiario.comedor}" selected>${beneficiario.comedor}</option>`;
+                } else {
+                    // Limpiar campos si no encuentra beneficiario
+                    document.getElementById('nombre').value = '';
+                    document.getElementById('comedor').innerHTML = '<option value="">Seleccione un comedor</option>';
+                }
+            } catch (error) {
+                console.error('Error al buscar beneficiario:', error);
+            }
         } else {
-            limpiarCampos();
-            mostrarEstado('dni', 'Beneficiario no registrado en el sistema');
-            estilizarCampo('dni', false);
+            // Limpiar campos si DNI es muy corto
+            document.getElementById('nombre').value = '';
+            document.getElementById('comedor').innerHTML = '<option value="">Seleccione un comedor</option>';
         }
     });
 
-    dniInput.addEventListener('blur', () => {
-        const dni = dniInput.value.trim();
-        if (dni.length > 0 && dni.length < 8) {
-            mostrarEstado('dni', 'El DNI debe tener al menos 8 dígitos');
-            estilizarCampo('dni', false);
-        }
-    });
-
-    form.addEventListener('submit', (e) => {
+    // Enviar formulario
+    document.getElementById('formRaciones').addEventListener('submit', function(e) {
         e.preventDefault();
-        if (envioEnProceso) return;
-        envioEnProceso = true;
-
+        
         const dni = document.getElementById('dni').value.trim();
         const nombre = document.getElementById('nombre').value.trim();
         const tipoRacion = document.getElementById('tipoDeRacion').value;
         const comedor = document.getElementById('comedor').value;
-
-        if (!dni || dni.length < 8 || !nombre || !tipoRacion || !comedor) {
-            alert('❌ Todos los campos son obligatorios y el DNI debe tener 8 dígitos.');
-            envioEnProceso = false;
+        
+        // Validaciones básicas
+        if (!dni || !nombre || !tipoRacion || !comedor) {
+            alert('Por favor, complete todos los campos');
             return;
         }
-
-        const beneficiarios = getBeneficiariosFromStorage();
-        const beneficiario = beneficiarios.find(b => b.dni === dni);
-
-        if (beneficiario) {
-            const nombreCompleto = `${beneficiario.nombre} ${beneficiario.apellidos}`.toUpperCase();
-            if (nombre.toUpperCase() === nombreCompleto) {
-                const ok = guardarRegistroEntrega({ dni, nombre, tipoRacion, comedor });
-                if (ok) {
-                    alert(`✅ ENTREGA REGISTRADA\nBeneficiario: ${nombre}\nDNI: ${dni}\nTipo: ${tipoRacion}\nComedor: ${comedor}`);
-                    form.reset();
-                    limpiarCampos();
-                } else {
-                    alert('❌ Error al guardar. Intente nuevamente.');
+        
+        // Verificar que existe el beneficiario
+        try {
+            const beneficiarios = JSON.parse(localStorage.getItem('beneficiarios')) || [];
+            const beneficiario = beneficiarios.find(b => b.dni === dni);
+            
+            if (beneficiario) {
+                // Guardar entrega
+                const entregas = JSON.parse(localStorage.getItem('entregas')) || [];
+                
+                entregas.push({
+                    id: Date.now(),
+                    dni: dni,
+                    nombre: nombre,
+                    tipoDeRacion: tipoRacion,
+                    comedor: comedor,
+                    fecha: new Date().toLocaleDateString('es-PE'),
+                    hora: new Date().toLocaleTimeString('es-PE')
+                });
+                
+                localStorage.setItem('entregas', JSON.stringify(entregas));
+                
+                alert('✅ ENTREGA REGISTRADA EXITOSAMENTE');
+                
+                // Actualizar tabla si existe la función
+                if (typeof window.actualizarTablaRaciones === 'function') {
+                    window.actualizarTablaRaciones();
                 }
+                
+                // Limpiar formulario
+                this.reset();
+                
             } else {
-                alert('❌ El nombre no coincide con el DNI ingresado.');
+                alert('❌ DNI no registrado en el sistema');
             }
-        } else {
-            alert('❌ El beneficiario no está registrado.');
+        } catch (error) {
+            alert('❌ Error al procesar la entrega');
+            console.error(error);
         }
-
-        envioEnProceso = false;
     });
 
-    document.getElementById('btnLimpiar').addEventListener('click', () => {
-        form.reset();
-        limpiarCampos();
-        dniInput.focus();
+    // Botón limpiar
+    document.getElementById('btnLimpiar').addEventListener('click', function() {
+        document.getElementById('formRaciones').reset();
     });
 
-    dniInput.focus();
+    // Enfocar en DNI al cargar
+    document.getElementById('dni').focus();
 });
