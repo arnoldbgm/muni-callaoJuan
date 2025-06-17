@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tipoDeRacion: document.getElementById('tipoDeRacion').value,
             comedor: document.getElementById('comedor').value,
             fecha: new Date().toLocaleDateString('es-PE'),
+            
             hora: new Date().toLocaleTimeString('es-PE', {hour: '2-digit', minute:'2-digit'})
         };
         
